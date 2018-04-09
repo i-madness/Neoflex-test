@@ -1,13 +1,19 @@
-import * as React from "react";
-import * as css from './Layout.scss';
+import * as React from 'react';
+const styles = require('./Layout.css');
 
-export default class Layout extends React.Component {
-    render() {
-        return (
-            <div className={ 'app' }>
-                <h1>Hello World!</h1>
-                <p>Foo to the barz</p>
-            </div>
-        );
-    }
+class App extends React.Component {
+  render() {
+    return (
+      <div className={styles.Layout}>
+        <header className="App-header">
+          <h1 className="App-title">Hello there</h1>
+        </header>
+        <p className="App-intro">
+          General Kenobi?
+        </p>
+      </div>
+    );
+  }
 }
+
+export default App;
