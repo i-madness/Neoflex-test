@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Music List</title>
+</head>
+<body>
+    <div id="songs"></div>
+    <script>
+        const state = []
+        var ws = new WebSocket("ws://" + window.location.host + "/wsapi")
+        ws.onmessage = msg => {
+          state.push(msg.data)
+          document.getElementById("songs").innerHTML = state.join('<br/>')
+        }
+        function createSong() {
+          ws.send(JSON.stringify({
+            name: String(Math.random()),
+            genre: [ 'ROCK', 'POP', 'JAZZ'][Math.random()*10 % 3],
+            isListened: false
+          }))
+        }
+    </script>
+</body>
+</html>
