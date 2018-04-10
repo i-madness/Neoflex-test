@@ -4,14 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ResponseBody
-import space.vromanov.musiclist.data.SongService
+import space.vromanov.musiclist.data.FilmService
 
 @Controller
-class BaseController(@Autowired val songService: SongService) {
+class BaseController(@Autowired val filmService: FilmService) {
     @GetMapping("/")
     public fun index() = "index.html"
 
-    @GetMapping("/songs/all")
+    @GetMapping("/films/all")
     @ResponseBody
-    public fun allSongs() = songService.getAllSongs()
+    public fun allFilms() = filmService.getAllFilms()
 }

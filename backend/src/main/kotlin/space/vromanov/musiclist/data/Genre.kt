@@ -1,8 +1,13 @@
 package space.vromanov.musiclist.data
 
+/**
+ * Lists all genres film could possibly have
+ */
 enum class Genre {
     NONE,
-    ROCK,
-    POP,
-    JAZZ
+    FANTASY,
+    COMEDY,
+    DRAMA,
+    SCI_FI,
+    HORROR
 }
