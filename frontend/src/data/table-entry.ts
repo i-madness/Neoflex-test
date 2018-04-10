@@ -1,7 +1,9 @@
 export enum FilmGenre {
+  NONE,
   FANTASY,
-  ROMANCE,
   COMEDY,
+  DRAMA,
+  SCI_FI,
   HORROR
 }
 
@@ -9,8 +11,12 @@ export enum FilmGenre {
  * Describes single entry of datatable. Also this format is used in API response
  */
 export interface FilmEntry {
-  filmName: string;
-  releaseDate: number; // unix
+  id: number;
+  name: string;
+  description: string; // -> textarea
   grade: number;
-  watched: boolean;
+  isWatched: boolean;  // -> checkbox
+  releaseDate: number; // unix time value -> datepicker
+  timeLength: number;  // minutes; might be switched to differrent duration
+  genres: Array<FilmGenre>; // list of items -> choose items with dropdown
 }
