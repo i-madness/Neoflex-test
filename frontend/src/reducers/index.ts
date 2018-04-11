@@ -1,4 +1,4 @@
 import { combineReducers } from 'redux';
-import filmEntryReducer from './film-entry/film-entry-reducer'
+import filmEntryReducer from './film-entry-reducer';
 
-export default combineReducers({ filmEntries: filmEntryReducer })
+export default combineReducers({ entryState: filmEntryReducer });

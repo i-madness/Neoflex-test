@@ -1,0 +1,10 @@
+.film-table {
+  border: 1px solid #000;
+  border-radius: 4px;
+
+  &--content {
+    thead > td {
+      padding: 1em;
+    }
+  }
+}

@@ -47,9 +47,7 @@ module.exports = {
       '.web.jsx',
       '.jsx',
     ],
-    alias: {
-      'react-native': 'react-native-web',
-    },
+    alias: { 'react-native': 'react-native-web' },
     plugins: [
       new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),
       new TsconfigPathsPlugin({ configFile: paths.appTsConfig }),
@@ -83,8 +81,6 @@ module.exports = {
               compact: true,
             },
           },
-
-          // Compile .tsx?
           {
             test: /\.(ts|tsx)$/,
             include: paths.appSrc,
@@ -98,15 +94,11 @@ module.exports = {
             ],
           },
           {
-            test: /\.css$/,
+            test: /\.scss$/,
             use: [
-              require.resolve('style-loader'),
-              {
-                loader: require.resolve('css-loader'),
-                options: {
-                  importLoaders: 1,
-                },
-              },
+              { loader: require.resolve('style-loader') },
+              { loader: 'typings-for-css-modules-loader?modules&namedExport&camelCase&sass' },
+              { loader: require.resolve('sass-loader') },
               {
                 loader: require.resolve('postcss-loader'),
                 options: {
@@ -114,25 +106,18 @@ module.exports = {
                   plugins: () => [
                     require('postcss-flexbugs-fixes'),
                     autoprefixer({
-                      browsers: [
-                        '>1%',
-                        'last 4 versions',
-                        'Firefox ESR',
-                        'not ie < 9', // React doesn't support IE8 anyway
-                      ],
+                      browsers: ['>1%', 'last 4 versions', 'Firefox ESR', 'not ie < 9'],
                       flexbox: 'no-2009',
                     }),
                   ],
                 },
-              },
-            ],
+              }, 
+            ]
           },
           {
             exclude: [/\.js$/, /\.html$/, /\.json$/],
             loader: require.resolve('file-loader'),
-            options: {
-              name: 'static/media/[name].[hash:8].[ext]',
-            },
+            options: { name: 'static/media/[name].[hash:8].[ext]' },
           },
         ],
       },
@@ -164,7 +149,5 @@ module.exports = {
     tls: 'empty',
     child_process: 'empty',
   },
-  performance: {
-    hints: false,
-  },
+  performance: { hints: false },
 };

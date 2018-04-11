@@ -28,8 +28,7 @@ if (env.stringified['process.env'].NODE_ENV !== '"production"') {
 const cssFilename = 'assets/css/[name].css';
 const extractTextPluginOptions = shouldUseRelativeAssetPaths
   ? // Making sure that the publicPath goes back to to build folder.
-    { publicPath: Array(cssFilename.split('/').length).join('../') }
-  : {};
+    { publicPath: Array(cssFilename.split('/').length).join('../') } : {};
 
 
 module.exports = {
@@ -42,9 +41,7 @@ module.exports = {
     chunkFilename: 'assets/js/[name].chunk.js',
     publicPath: publicPath,
     devtoolModuleFilenameTemplate: info =>
-      path
-        .relative(paths.appSrc, info.absoluteResourcePath)
-        .replace(/\\/g, '/'),
+      path.relative(paths.appSrc, info.absoluteResourcePath).replace(/\\/g, '/'),
   },
   resolve: {
     modules: ['node_modules', paths.appNodeModules].concat(
@@ -62,9 +59,7 @@ module.exports = {
       '.web.jsx',
       '.jsx',
     ],
-    alias: {
-      'react-native': 'react-native-web',
-    },
+    alias: { 'react-native': 'react-native-web' },
     plugins: [
       new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),
       new TsconfigPathsPlugin({ configFile: paths.appTsConfig }),
@@ -93,10 +88,7 @@ module.exports = {
             test: /\.(js|jsx|mjs)$/,
             include: paths.appSrc,
             loader: require.resolve('babel-loader'),
-            options: {
-              
-              compact: true,
-            },
+            options: { compact: true },
           },
           {
             test: /\.(ts|tsx)$/,
@@ -112,57 +104,35 @@ module.exports = {
             ],
           },
           {
-            test: /\.css$/,
-            loader: ExtractTextPlugin.extract(
-              Object.assign(
-                {
-                  fallback: {
-                    loader: require.resolve('style-loader'),
-                    options: {
-                      hmr: false,
-                    },
-                  },
-                  use: [
-                    {
-                      loader: require.resolve('css-loader'),
-                      options: {
-                        importLoaders: 1,
-                        minimize: true,
-                        sourceMap: shouldUseSourceMap,
-                      },
-                    },
-                    {
-                      loader: require.resolve('postcss-loader'),
-                      options: {
-                        // Necessary for external CSS imports to work
-                        // https://github.com/facebookincubator/create-react-app/issues/2677
-                        ident: 'postcss',
-                        plugins: () => [
-                          require('postcss-flexbugs-fixes'),
-                          autoprefixer({
-                            browsers: [
-                              '>1%',
-                              'last 4 versions',
-                              'Firefox ESR',
-                              'not ie < 9', // React doesn't support IE8 anyway
-                            ],
-                            flexbox: 'no-2009',
-                          }),
-                        ],
-                      },
-                    },
+            test: /\.scss$/,
+            use: [
+              { loader: require.resolve('style-loader') },
+              { loader: 'typings-for-css-modules-loader?modules&namedExport&camelCase&sass' },
+              { loader: require.resolve('sass-loader') },
+              {
+                loader: require.resolve('postcss-loader'),
+                options: {
+                  ident: 'postcss',
+                  plugins: () => [
+                    require('postcss-flexbugs-fixes'),
+                    autoprefixer({
+                      browsers: [
+                        '>1%',
+                        'last 4 versions',
+                        'Firefox ESR',
+                        'not ie < 9',  
+                      ],
+                      flexbox: 'no-2009',
+                    }),
                   ],
                 },
-                extractTextPluginOptions
-              )
-            ),
+              }, 
+            ]
           },
           {
             loader: require.resolve('file-loader'),
             exclude: [/\.js$/, /\.html$/, /\.json$/],
-            options: {
-              name: 'assets/media/[name].[hash:8].[ext]',
-            },
+            options: { name: 'assets/media/[name].[hash:8].[ext]' },
           },
         ],
       },
@@ -206,12 +176,8 @@ module.exports = {
       },
       sourceMap: shouldUseSourceMap,
     }),
-    new ExtractTextPlugin({
-      filename: cssFilename,
-    }),
-    new ManifestPlugin({
-      fileName: 'asset-manifest.json',
-    }),
+    new ExtractTextPlugin({ filename: cssFilename }),
+    new ManifestPlugin({ fileName: 'asset-manifest.json' }),
     new SWPrecacheWebpackPlugin({
       dontCacheBustUrlsMatching: /\.\w{8}\./,
       filename: 'service-worker.js',

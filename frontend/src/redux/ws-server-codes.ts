@@ -1,0 +1,11 @@
+export const ALL_ENTRIES_FETCH_SUCCESS = 100;
+export const FILM_ADD_SUCCESS = 101;
+export const FILM_MODIFY_SUCCESS = 102;
+export const FILM_DELETE_SUCCESS = 103;
+export const ALL_ENTRIES_FETCH_FAILURE = 200;
+export const FILM_NOT_FOUND = 201;
+export const FILM_ADD_FAILURE = 202;
+export const FILM_MODIFY_FAILURE = 203;
+export const FILM_DELETE_FAILURE = 204;
+export const INVALID_MESSAGE_FORMAT = 298;
+export const UNKNOWN_ERROR = 299;
