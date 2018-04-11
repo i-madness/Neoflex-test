@@ -1,10 +1,39 @@
-.btn-success {
-  cursor: pointer;
-  background-color: #28a745;
-  border-color: #28a745;
+.btn {
   border-width: 1px;
   color: #fff;
   border-radius: .25rem;
   padding: .1rem .65rem;
   font-size: 1.5em;
+  cursor: pointer;
+}
+
+.btn-success {
+  @extend .btn;
+  background-color: #28a745;
+  border-color: #28a745;
+  &:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+  }
+}
+
+.btn-primary {
+  @extend .btn;
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #fff;
+  &:hover {
+    background-color: #0069d9;
+    border-color: #0069d9;
+  }
+}
+
+.btn-danger {
+  @extend .btn;
+  background-color: #dc3545;
+  border-color: #dc3545;
+  &:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+  }
 }

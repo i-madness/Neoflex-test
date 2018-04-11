@@ -11,15 +11,18 @@ $defaultBgColor: #fff;
 
 .film-table {
   border: 1px solid #000;
-  max-width: 100%;
+  overflow-x: auto;
   border-radius: 5px;
   padding-bottom: 5px;
 
-
-  &--action-input {
+  &--form-control {
     border-radius: .25rem;
     border: 1px solid;
     padding: 5px;
+    width: 100%;
+    /* For textareas: */
+    resize: vertical;
+    min-height: 1.5em;
   }
 
   /* <table> */

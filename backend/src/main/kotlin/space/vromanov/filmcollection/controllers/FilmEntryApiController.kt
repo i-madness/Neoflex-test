@@ -24,10 +24,12 @@ class FilmEntryApiController(@Autowired val filmService: FilmService) {
     @PutMapping("/films/rnd")
     public fun createRandomFilm() {
         val film = Film()
-        film.setGenres(listOf(Genre.DRAMA, Genre.COMEDY))
+        val rnd = Random()
+        //film.setGenres(listOf(Genre.DRAMA, Genre.COMEDY))
+        film.genre = Genre.values()[rnd.nextInt(Genre.values().size-1)]
         film.name = UUID.randomUUID().toString()
         film.releaseDate = Date()
-        film.timeLength = Random().nextInt()
+        film.timeLength = rnd.nextInt()
         film.description = UUID.randomUUID().toString()
         filmService.addFilm(film)
     }

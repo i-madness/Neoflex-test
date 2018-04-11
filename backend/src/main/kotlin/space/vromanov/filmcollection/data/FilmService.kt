@@ -28,7 +28,8 @@ class FilmService(@Autowired private val filmRepository: FilmRepository) {
             dbFilm.description = film.description
             dbFilm.isWatched = film.isWatched
             dbFilm.releaseDate = film.releaseDate
-            dbFilm.setGenres(film.getGenres())
+            dbFilm.genre = film.genre
+            //dbFilm.setGenres(film.getGenres())
             return filmRepository.save(dbFilm)
         }
         return null

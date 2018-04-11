@@ -27,14 +27,16 @@ class Film {
     @Column(name = "f_time_length")
     var timeLength: Int = 0
 
-    @Column(name = "f_genres")
-    private var genres: String = Genre.NONE.name
+    @Column(name = "f_genre")
+    @Enumerated(value = EnumType.STRING)
+    var genre: Genre = Genre.NONE
 
-    fun getGenres(): List<Genre> {
+    // For reasons of time economy we'll leave only one genre for film
+    /*fun getGenres(): List<Genre> {
         return genres.split(",").map { Genre.valueOf(it) }
     }
 
     fun setGenres(genres: List<Genre>) {
         this.genres = genres.joinToString(",")
-    }
+    }*/
 }

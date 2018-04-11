@@ -3,6 +3,9 @@ import * as css from './FilmTable.scss';
 import { FilmEntry, FilmGenre } from '../../data/table-entry';
 import { WrappedState as FilmEntriesState } from '../../reducers/film-entry-reducer';
 import { isEmpty } from 'lodash';
+import DatePicker from 'react-datepicker';
+import * as moment from 'moment';
+import 'react-datepicker/dist/react-datepicker-cssmodules.css'
 
 interface FilmTableState {
   editingEntry: FilmEntry
@@ -22,7 +25,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
       genre: FilmGenre.NONE,
       grade: 0,
       timeLength: 0,
-      releaseDate: 0,
+      releaseDate: moment().unix(),
       isWatched: false
     }
   })
@@ -41,33 +44,64 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
         <td className={css.filmTableContentRowCellGenres}>{entry.genre}</td>
         <td className={css.filmTableContentRowCellGrade}>{entry.grade}</td>
         <td className={css.filmTableContentRowCellWatched}>{entry.isWatched}</td>
+        <td className={css.filmTableContentRowCellAction}>
+          <button className={css.btnPrimary}>✎</button>
+          <button className={css.btnDanger}>✖</button>
+        </td>
       </tr>
     ));
   }
 
   renderCreateEntryRow() {
+    let { editingEntry } = this.state;
+    let releaseDate = moment.unix(this.state.editingEntry.releaseDate)
     return (
       <tr className="new-entry">
         <td className={css.filmTableContentRowCellName}>
-          <input className={css.filmTableActionInput} />
+          <input
+            value={editingEntry.name}
+            className={css.filmTableFormControl}
+            onChange={(e: any) => this.onNameChange(e)}
+          />
         </td>
         <td className={css.filmTableContentRowCellDescription}>
-          <input className={css.filmTableActionInput} />
+          <textarea
+            value={editingEntry.description}
+            className={css.filmTableFormControl}
+            onChange={(e: any) => this.onDescriptionChange}
+          />
         </td>
         <td className={css.filmTableContentRowCellReleaseDate}>
-          <input className={css.filmTableActionInput} />
+          <DatePicker
+            selected={releaseDate}
+            dateFormat="DD-MM-YYYY"
+            className={css.filmTableFormControl}
+            onChange={(date: moment.Moment) => this.onReleaseDateChange(date)}
+          />
         </td>
         <td className={css.filmTableContentRowCellRunningTime}>
-          <input type="number" className={css.filmTableActionInput} />
+          <input
+            type="number"
+            className={css.filmTableFormControl}
+            onChange={(e: any) => this.onTimeLengthChange(e)}
+          />
         </td>
         <td className={css.filmTableContentRowCellGenres}>
-          <input className={css.filmTableActionInput} />
+          <input
+            type=""
+            className={css.filmTableFormControl}
+          />
         </td>
         <td className={css.filmTableContentRowCellGrade}>
-          <input className={css.filmTableActionInput} />
+          <input className={css.filmTableFormControl} />
         </td>
         <td className={css.filmTableContentRowCellWatched}>
-          <input onChange={(e: any) => this.onIsWatchedChange(e)} type="checkbox" className={css.filmTableActionInput} />
+          <input
+            checked={editingEntry.isWatched}
+            type="checkbox"
+            className={css.filmTableFormControl}
+            onChange={(e: any) => this.onIsWatchedChange(e)}
+          />
         </td>
         <td className={css.filmTableContentRowCellAction}>
           <button className={css.btnSuccess}>+</button>
@@ -116,6 +150,24 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
       editingEntry: {
         ...this.state.editingEntry,
         description: event.target.value
+      }
+    })
+  }
+
+  onReleaseDateChange = (date: moment.Moment) => {
+    this.setState({
+      editingEntry: {
+        ...this.state.editingEntry,
+        releaseDate: date.unix()
+      }
+    })
+  }
+
+  onTimeLengthChange = (event: any) => {
+    this.setState({
+      editingEntry: {
+        ...this.state.editingEntry,
+        timeLength: Math.floor(event.target.value)
       }
     })
   }
