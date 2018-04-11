@@ -9,17 +9,15 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = ["http://localhost:3000"])
 class FilmEntryApiController(@Autowired val filmService: FilmService) {
     @GetMapping("/films/all")
     public fun allFilms() = filmService.getAllFilms()
 
-    @GetMapping("/genres")
-    public fun allGenres() = Genre.values().map { it.displayName }
-
     @GetMapping("/genres/find")
     public fun findGenres(@RequestParam searchStr: String) = Genre.values()
-        .filter { it.displayName.contains(searchStr.toLowerCase()) || it.name.contains(searchStr.toLowerCase()) }
-        .map { it.displayName }
+        .filter { it.name.toLowerCase().contains(searchStr.toLowerCase()) }
+        .map { it.name }
 
     @PutMapping("/films/rnd")
     public fun createRandomFilm() {

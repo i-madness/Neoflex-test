@@ -12,6 +12,6 @@ import space.vromanov.filmcollection.ws.FilmWebSocketHandler
 @EnableWebSocket
 class WebSocketConfiguration(@Autowired val songWebsocketHandler: FilmWebSocketHandler) : WebSocketConfigurer {
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
-        registry.addHandler(songWebsocketHandler, "/wsapi")
+        registry.addHandler(songWebsocketHandler, "/wsapi").setAllowedOrigins("http://localhost:3000")
     }
 }
