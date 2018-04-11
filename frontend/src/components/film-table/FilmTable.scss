@@ -1,10 +1,62 @@
+@import "../global.scss";
+
+$defaultBgColor: #fff;
+
+@mixin cellDefinition($width, $pad: .6em) {
+  width: $width;
+  padding: $pad;
+  word-wrap: break-word;
+  text-align: center;
+}
+
 .film-table {
   border: 1px solid #000;
-  border-radius: 4px;
+  max-width: 100%;
+  border-radius: 5px;
+  padding-bottom: 5px;
 
+
+  &--action-input {
+    border-radius: .25rem;
+    border: 1px solid;
+    padding: 5px;
+  }
+
+  /* <table> */
   &--content {
-    thead > td {
-      padding: 1em;
+    border-collapse: collapse;
+
+    &--row {
+      &--head {
+        color: #fff;
+        font-weight: bold;
+        background-color: #292c34;
+        cursor: pointer;
+
+        tr > td:hover {
+           background-color: #3b3e46;
+        }
+      }
+
+      &--cell {
+        &--name         { @include cellDefinition(20%) }
+        &--description  { @include cellDefinition(30%) }
+        &--release-date { @include cellDefinition(10%) }
+        &--running-time { @include cellDefinition(5%)  }
+        &--genres       { @include cellDefinition(15%) }
+        &--grade        { @include cellDefinition(10%) }
+        &--watched      { @include cellDefinition(5%)  }
+        &--action { 
+          @include cellDefinition(5%);
+          text-align: center;
+        }
+      }
     }
+  }
+
+  &--empty-message {
+    padding: 1em;
+    font-style: italic;
+    border-radius: 0 0 4px 4px;
   }
 }

@@ -18,5 +18,5 @@ export interface FilmEntry {
   isWatched: boolean;  // -> checkbox
   releaseDate: number; // unix time value -> datepicker
   timeLength: number;  // minutes; might be switched to differrent duration
-  genres: Array<FilmGenre>; // list of items -> choose items with dropdown
+  genre: FilmGenre; // -> choose from dropdown
 }
