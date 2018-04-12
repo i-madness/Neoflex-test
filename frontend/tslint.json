@@ -19,7 +19,7 @@
         "interface-name": [true, "never-prefix"],
         "jsdoc-format": true,
         "jsx-no-lambda": false,
-        "jsx-multiline": true,
+        "jsx-multiline": false,
         "label-position": true,
         "member-ordering": [
             true,

@@ -1,3 +1,7 @@
+$colorSuccess: #28a745;
+$colorDanger: #dc3545;
+$colorWarn: #ffc107;
+
 .btn {
   border-width: 1px;
   color: #fff;
@@ -9,8 +13,8 @@
 
 .btn-success {
   @extend .btn;
-  background-color: #28a745;
-  border-color: #28a745;
+  background-color: $colorSuccess;
+  border-color: $colorSuccess;
   &:hover {
     background-color: #218838;
     border-color: #1e7e34;
@@ -30,10 +34,20 @@
 
 .btn-danger {
   @extend .btn;
-  background-color: #dc3545;
-  border-color: #dc3545;
+  background-color: $colorDanger;
+  border-color: $colorDanger;
   &:hover {
     background-color: #c82333;
     border-color: #bd2130;
+  }
+}
+
+.btn-warn {
+  @extend .btn;
+  background-color: $colorWarn;
+  border-color: $colorWarn;
+  &:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
   }
 }

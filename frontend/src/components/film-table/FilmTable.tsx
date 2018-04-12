@@ -4,28 +4,38 @@ import store from '../../redux/store'
 import { FilmEntry } from '../../data/table-entry';
 import { WrappedState as FilmEntriesState } from '../../reducers/film-entry-reducer';
 import { ENTRY_CREATE_REQUEST, ENTRY_MODIFY_REQUEST, ENTRY_DELETE_REQUEST } from '../../reducers/film-entry-actions'
-import { isEmpty } from 'lodash';
+import { differenceWith, isEmpty, isEqual, orderBy } from 'lodash';
 import { fetchGenres } from '../../data/rest-client'
 import DatePicker from 'react-datepicker';
 import * as moment from 'moment';
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 const Autocomplete = require('react-autocomplete'); // no typings
 
-enum SortField {
-  NAME,
-  DESCRIPTION,
-  RELEASE_DATE,
-  RUNNUNG_TIME,
-  GENRES,
-  GRADE,
-  WATCHED
+interface TableField {
+  name: string,
+  display: string,
+  className: string
+}
+
+const tableFields = {
+  NAME: { name: 'name', display: 'Name', className: css.filmTableContentRowCellName },
+  DESCRIPTION: { name:'description', display: 'Description', className: css.filmTableContentRowCellDescription },
+  RELEASE_DATE: { name: 'releaseDate', display: 'Release date', className: css.filmTableContentRowCellReleaseDate },
+  RUNNUNG_TIME: { name: 'timeLength', display: 'Running time', className: css.filmTableContentRowCellRunningTime },
+  GENRE: { name: 'genre', display: 'Genre', className: css.filmTableContentRowCellGenres },
+  GRADE: { name: 'grade', display: 'Grade', className: css.filmTableContentRowCellGrade },
+  WATCHED: { name: 'watched', display: 'Watched', className: css.filmTableContentRowCellWatched }
 }
 
 interface FilmTableState {
   editingEntry: FilmEntry,
   genreFieldText: string,
-  genreAvailableOptions: Array<String>,
-  sortField: SortField
+  genreAvailableOptions: String[],
+  sortField: TableField,
+  isOrderAsc: boolean,
+  newEntryId: number,
+  modifiedEntryId: number,
+  disappearingEntry?: FilmEntry // when we click delete button this entry stays in table for 3 sec.
 }
 
 export default class FilmTable extends React.Component<FilmEntriesState, FilmTableState> {
@@ -85,16 +95,66 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
     },
     genreFieldText: '',
     genreAvailableOptions: [],
-    sortField: SortField.NAME
+    sortField: tableFields.NAME,
+    isOrderAsc: true,
+    newEntryId: -1,
+    modifiedEntryId: -1,
+    disappearingEntry: undefined
   })
 
-  get filmEntries() {
-    return this.props.entryState.filmEntries || [];
+  get filmEntries(): Array<FilmEntry> {
+    return orderBy(
+      (this.props.entryState.filmEntries || []).concat(this.state.disappearingEntry ? this.state.disappearingEntry : []),
+      this.state.sortField.name,
+      this.state.isOrderAsc ? 'asc' : 'desc'
+    );
+  }
+
+  get isEditing(): boolean {
+    return this.state.editingEntry.id !== -1;
+  }
+
+  componentWillReceiveProps(nextProps: FilmEntriesState) {
+    if (!isEqual(this.props, nextProps)) {
+      let oldEntries = this.props.entryState.filmEntries;
+      let newEntries = nextProps.entryState.filmEntries;
+      let diff: FilmEntry[] = differenceWith(newEntries, oldEntries, isEqual);
+      if (isEmpty(diff)) {
+        diff = differenceWith(oldEntries, newEntries, isEqual);
+      }      
+      if (diff.length === 1) {
+        if (oldEntries.length < newEntries.length) {
+          this.setState({ newEntryId: diff[0].id });
+          setTimeout(() => this.setState({ newEntryId: -1 }), 3000);
+        } else if (oldEntries.length > newEntries.length) {
+          this.setState({ disappearingEntry: diff[0] });
+          setTimeout(() => this.setState({ disappearingEntry: undefined }), 3000);
+        } else {
+          this.setState({ modifiedEntryId: diff[0].id });
+          setTimeout(() => this.setState({ modifiedEntryId: -1 }), 3000);
+        }
+      }
+    }
+  }
+
+  calculateRowClass(id: number): string {
+    switch (id) {
+      case this.state.newEntryId:
+        return css.filmTableContentRowNew;
+      case this.state.disappearingEntry ? this.state.disappearingEntry.id : NaN:
+        return css.filmTableContentRowDeleted;
+      case this.state.modifiedEntryId:
+        return css.filmTableContentRowModified;
+      case this.state.editingEntry.id:
+        return css.filmTableContentRowEditing;
+      default:
+        return '';
+    }
   }
 
   renderTableRows() {
     return this.filmEntries.map((entry: FilmEntry, i: number) => (
-      <tr key={i}>
+      <tr key={i} className={this.calculateRowClass(entry.id)}>
         <td className={css.filmTableContentRowCellName}>{entry.name}</td>
         <td className={css.filmTableContentRowCellDescription}>{entry.description}</td>
         <td className={css.filmTableContentRowCellReleaseDate}>{moment(entry.releaseDate).format('DD/MM/YYYY')}</td>
@@ -114,7 +174,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
     let { editingEntry } = this.state;
     let releaseDate = moment(this.state.editingEntry.releaseDate)
     return (
-      <tr className={css.filmTableInputRow}>
+      <tr className={this.isEditing ? css.filmTableInputRowEditing : css.filmTableInputRow}>
         <td className={css.filmTableContentRowCellName}>
           <input
             value={editingEntry.name}
@@ -176,25 +236,29 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
           />
         </td>
         <td className={css.filmTableContentRowCellAction}>
-          <button onClick={() => this.onAddButtonClick()} className={css.btnSuccess}>+</button>
+          <button onClick={() => this.onAddButtonClick()} className={css.filmTableAddAction}>+</button>
+          <button onClick={() => this.onClearButtonClick()} className={css.filmTableClearAction}>⌫</button>
         </td>
       </tr>
     );
   }
 
   render() {
+    let headRows = Object.keys(tableFields)
+      .map((field: any, i: number) => {
+        let tableField = tableFields[field];
+        return (
+          <td key={i} className={tableField.className} onClick={() => this.onHeadRowCellClick(tableField)}>
+            {tableField.display}
+          </td>
+        )
+      });
     return (
       <div className={css.filmTable}>
         <table className={css.filmTableContent}>
           <thead className={css.filmTableContentRowHead}>
             <tr>
-              <td className={css.filmTableContentRowCellName}>Name</td>
-              <td className={css.filmTableContentRowCellDescription}>Description</td>
-              <td className={css.filmTableContentRowCellReleaseDate}>Release date</td>
-              <td className={css.filmTableContentRowCellRunningTime}>Running time</td>
-              <td className={css.filmTableContentRowCellGenres}>Genres</td>
-              <td className={css.filmTableContentRowCellGrade}>Grade</td>
-              <td className={css.filmTableContentRowCellWatched}>Watched</td>
+              {headRows}
               <td className={css.filmTableContentRowCellAction} />
             </tr>
           </thead>
@@ -230,7 +294,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
     this.setState({
       editingEntry: {
         ...this.state.editingEntry,
-        releaseDate: date.unix()
+        releaseDate: date.valueOf()
       }
     });
   }
@@ -262,6 +326,22 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
     });
   }
 
+  // Button handlers
+
+  onHeadRowCellClick = (tableField: TableField) => {
+    if (isEqual(this.state.sortField, tableField)) {
+      this.setState({
+        isOrderAsc: !this.state.isOrderAsc
+      });
+    } else {
+      this.setState({
+        sortField: tableField,
+        isOrderAsc: true
+      });
+    }
+    
+  }
+
   onAddButtonClick = () => {
     let payload = this.state.editingEntry;
     if (payload.id === -1) {
@@ -270,6 +350,10 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
       store.dispatch({ type: ENTRY_MODIFY_REQUEST, payload });
     }
     this.setState(this.initalState())
+  }
+
+  onClearButtonClick = () => {
+    this.setState(this.initalState());
   }
 
   onEditButtonClick = (entry: FilmEntry) => () => {
