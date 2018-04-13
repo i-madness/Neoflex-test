@@ -4,7 +4,4 @@ import webSocketMiddleware from './ws-middleware';
 
 // TODO: also middleware / reducers for REST API
 
-export default createStore(
-  rootReducer,
-  applyMiddleware(webSocketMiddleware)
-);
+export default createStore(rootReducer, applyMiddleware(webSocketMiddleware));

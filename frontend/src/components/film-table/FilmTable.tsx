@@ -1,41 +1,41 @@
 import * as React from 'react';
 import * as css from './FilmTable.scss';
-import store from '../../redux/store'
+import store from '../../redux/store';
 import { FilmEntry } from '../../data/table-entry';
 import { WrappedState as FilmEntriesState } from '../../reducers/film-entry-reducer';
-import { ENTRY_CREATE_REQUEST, ENTRY_MODIFY_REQUEST, ENTRY_DELETE_REQUEST } from '../../reducers/film-entry-actions'
+import { ENTRY_CREATE_REQUEST, ENTRY_MODIFY_REQUEST, ENTRY_DELETE_REQUEST } from '../../reducers/film-entry-actions';
 import { differenceWith, isEmpty, isEqual, orderBy } from 'lodash';
-import { fetchGenres } from '../../data/rest-client'
+import { fetchGenres } from '../../data/rest-client';
 import DatePicker from 'react-datepicker';
 import * as moment from 'moment';
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 const Autocomplete = require('react-autocomplete'); // no typings
 
 interface TableField {
-  name: string,
-  display: string,
-  className: string
+  name: string;
+  display: string;
+  className: string;
 }
 
 const tableFields = {
   NAME: { name: 'name', display: 'Name', className: css.filmTableContentRowCellName },
-  DESCRIPTION: { name:'description', display: 'Description', className: css.filmTableContentRowCellDescription },
+  DESCRIPTION: { name: 'description', display: 'Description', className: css.filmTableContentRowCellDescription },
   RELEASE_DATE: { name: 'releaseDate', display: 'Release date', className: css.filmTableContentRowCellReleaseDate },
   RUNNUNG_TIME: { name: 'timeLength', display: 'Running time', className: css.filmTableContentRowCellRunningTime },
   GENRE: { name: 'genre', display: 'Genre', className: css.filmTableContentRowCellGenres },
   GRADE: { name: 'grade', display: 'Grade', className: css.filmTableContentRowCellGrade },
   WATCHED: { name: 'watched', display: 'Watched', className: css.filmTableContentRowCellWatched }
-}
+};
 
 interface FilmTableState {
-  editingEntry: FilmEntry,
-  genreFieldText: string,
-  genreAvailableOptions: String[],
-  sortField: TableField,
-  isOrderAsc: boolean,
-  newEntryId: number,
-  modifiedEntryId: number,
-  disappearingEntry?: FilmEntry // when we click delete button this entry stays in table for 3 sec.
+  editingEntry: FilmEntry;
+  genreFieldText: string;
+  genreAvailableOptions: String[];
+  sortField: TableField;
+  isOrderAsc: boolean;
+  newEntryId: number;
+  modifiedEntryId: number;
+  disappearingEntry?: FilmEntry; // when we click delete button this entry stays in table for 3 sec.
 }
 
 export default class FilmTable extends React.Component<FilmEntriesState, FilmTableState> {
@@ -75,7 +75,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
         genreFieldText: value
       });
     }
-  }
+  };
 
   constructor(props: FilmEntriesState) {
     super(props);
@@ -84,7 +84,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
 
   initalState = (): FilmTableState => ({
     editingEntry: {
-      id: -1, // id === -1 means that form is not in state of editing existing entry 
+      id: -1, // id === -1 means that form is not in state of editing existing entry
       name: '',
       description: '',
       genre: '',
@@ -100,7 +100,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
     newEntryId: -1,
     modifiedEntryId: -1,
     disappearingEntry: undefined
-  })
+  });
 
   get filmEntries(): Array<FilmEntry> {
     return orderBy(
@@ -121,7 +121,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
       let diff: FilmEntry[] = differenceWith(newEntries, oldEntries, isEqual);
       if (isEmpty(diff)) {
         diff = differenceWith(oldEntries, newEntries, isEqual);
-      }      
+      }
       if (diff.length === 1) {
         if (oldEntries.length < newEntries.length) {
           this.setState({ newEntryId: diff[0].id });
@@ -163,8 +163,12 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
         <td className={css.filmTableContentRowCellGrade}>{entry.grade}</td>
         <td className={css.filmTableContentRowCellWatched}>{entry.watched ? 'Yes' : 'No'}</td>
         <td className={css.filmTableContentRowCellAction}>
-          <button className={css.filmTableEditAction} onClick={this.onEditButtonClick(entry)}>✎</button>
-          <button className={css.filmTableDeleteAction} onClick={this.onDeleteButtonClick(entry.id)}>✖</button>
+          <button className={css.filmTableEditAction} onClick={this.onEditButtonClick(entry)}>
+            ✎
+          </button>
+          <button className={css.filmTableDeleteAction} onClick={this.onDeleteButtonClick(entry.id)}>
+            ✖
+          </button>
         </td>
       </tr>
     ));
@@ -172,15 +176,11 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
 
   renderCreateEntryRow() {
     let { editingEntry } = this.state;
-    let releaseDate = moment(this.state.editingEntry.releaseDate)
+    let releaseDate = moment(this.state.editingEntry.releaseDate);
     return (
       <tr className={this.isEditing ? css.filmTableInputRowEditing : css.filmTableInputRow}>
         <td className={css.filmTableContentRowCellName}>
-          <input
-            value={editingEntry.name}
-            className={css.filmTableFormControl}
-            onChange={(e: any) => this.onNameChange(e)}
-          />
+          <input value={editingEntry.name} className={css.filmTableFormControl} onChange={(e: any) => this.onNameChange(e)} />
         </td>
         <td className={css.filmTableContentRowCellDescription}>
           <textarea
@@ -236,23 +236,26 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
           />
         </td>
         <td className={css.filmTableContentRowCellAction}>
-          <button onClick={() => this.onAddButtonClick()} className={css.filmTableAddAction}>+</button>
-          <button onClick={() => this.onClearButtonClick()} className={css.filmTableClearAction}>⌫</button>
+          <button onClick={() => this.onAddButtonClick()} className={css.filmTableAddAction}>
+            +
+          </button>
+          <button onClick={() => this.onClearButtonClick()} className={css.filmTableClearAction}>
+            ⌫
+          </button>
         </td>
       </tr>
     );
   }
 
   render() {
-    let headRows = Object.keys(tableFields)
-      .map((field: any, i: number) => {
-        let tableField = tableFields[field];
-        return (
-          <td key={i} className={tableField.className} onClick={() => this.onHeadRowCellClick(tableField)}>
-            {tableField.display}
-          </td>
-        )
-      });
+    let headRows = Object.keys(tableFields).map((field: any, i: number) => {
+      let tableField = tableFields[field];
+      return (
+        <td key={i} className={tableField.className} onClick={() => this.onHeadRowCellClick(tableField)}>
+          {tableField.display}
+        </td>
+      );
+    });
     return (
       <div className={css.filmTable}>
         <table className={css.filmTableContent}>
@@ -279,7 +282,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
         name: event.target.value
       }
     });
-  }
+  };
 
   onDescriptionChange = (event: any) => {
     this.setState({
@@ -288,7 +291,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
         description: event.target.value
       }
     });
-  }
+  };
 
   onReleaseDateChange = (date: moment.Moment) => {
     this.setState({
@@ -297,7 +300,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
         releaseDate: date.valueOf()
       }
     });
-  }
+  };
 
   onTimeLengthChange = (event: any) => {
     this.setState({
@@ -305,8 +308,8 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
         ...this.state.editingEntry,
         timeLength: Math.floor(event.target.value)
       }
-    })
-  }
+    });
+  };
 
   onGradeChange = (event: any) => {
     this.setState({
@@ -315,7 +318,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
         grade: event.target.value
       }
     });
-  }
+  };
 
   onIsWatchedChange = (event: any) => {
     this.setState({
@@ -324,7 +327,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
         watched: event.target.checked
       }
     });
-  }
+  };
 
   // Button handlers
 
@@ -339,8 +342,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
         isOrderAsc: true
       });
     }
-    
-  }
+  };
 
   onAddButtonClick = () => {
     let payload = this.state.editingEntry;
@@ -349,24 +351,24 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
     } else {
       store.dispatch({ type: ENTRY_MODIFY_REQUEST, payload });
     }
-    this.setState(this.initalState())
-  }
+    this.setState(this.initalState());
+  };
 
   onClearButtonClick = () => {
     this.setState(this.initalState());
-  }
+  };
 
   onEditButtonClick = (entry: FilmEntry) => () => {
     this.setState({
       editingEntry: entry,
       genreFieldText: entry.genre
     });
-  }
+  };
 
   onDeleteButtonClick = (id: number) => () => {
     store.dispatch({ type: ENTRY_DELETE_REQUEST, payload: id });
     if (this.state.editingEntry.id === id) {
       this.setState(this.initalState());
     }
-  }
+  };
 }

@@ -1,17 +1,12 @@
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
     window.location.hostname === '[::1]' ||
-    window.location.hostname.match(
-      /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
-    )
+    window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
 );
 
 export default function register() {
   if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
-    const publicUrl = new URL(
-      process.env.PUBLIC_URL!,
-      window.location.toString()
-    );
+    const publicUrl = new URL(process.env.PUBLIC_URL!, window.location.toString());
     if (publicUrl.origin !== window.location.origin) {
       return;
     }
@@ -55,10 +50,7 @@ function registerValidSW(swUrl: string) {
 function checkValidServiceWorker(swUrl: string) {
   fetch(swUrl)
     .then(response => {
-      if (
-        response.status === 404 ||
-        response.headers.get('content-type')!.indexOf('javascript') === -1
-      ) {
+      if (response.status === 404 || response.headers.get('content-type')!.indexOf('javascript') === -1) {
         navigator.serviceWorker.ready.then(registration => {
           registration.unregister().then(() => {
             window.location.reload();
@@ -69,9 +61,7 @@ function checkValidServiceWorker(swUrl: string) {
       }
     })
     .catch(() => {
-      console.log(
-        'No internet connection found. App is running in offline mode.'
-      );
+      console.log('No internet connection found. App is running in offline mode.');
     });
 }
 

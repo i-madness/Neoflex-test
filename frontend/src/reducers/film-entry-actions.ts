@@ -1,4 +1,4 @@
-import { Action } from 'redux'
+import { Action } from 'redux';
 
 /* Websocket connection actions */
 export const ENDPOINT_CONNECT = 'ENDPOINT_CONNECT';
