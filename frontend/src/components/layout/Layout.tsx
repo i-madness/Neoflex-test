@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as css from './Layout.scss';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import FilmTable from '../film-table/FilmTable';
 import { WrappedState as FilmEntriesState } from '../../reducers/film-entry-reducer';
 
