@@ -50,9 +50,10 @@
     "whatwg-fetch": "2.0.3"
   },
   "scripts": {
-    "start": "node scripts/start.js",
+    "start": "prettier --find-config-path --write \"*src/**/*.ts*\" && node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
+    "format": "prettier --find-config-path --write \"*src/**/*.ts*\"",
     "transfer": "transfer.cmd"
   },
   "devDependencies": {
