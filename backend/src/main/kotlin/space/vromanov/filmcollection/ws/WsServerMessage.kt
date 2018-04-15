@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import space.vromanov.filmcollection.data.Film
 
 /**
- * Outgoing web socket message to client
+ * Outgoing web socket info to client
  */
 data class WsServerMessage(
     val code: Int,
-    val message: String?
+    val info: String?
 ) {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var entry: Film? = null

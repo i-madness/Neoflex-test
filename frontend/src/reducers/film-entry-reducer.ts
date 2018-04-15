@@ -1,14 +1,16 @@
 import FilmEntryAction, * as FilmEntryActions from './film-entry-actions';
 import { findIndex } from 'lodash';
 import { FilmEntry } from '../data/table-entry';
+import ApplicationError from '../data/application-error';
 
 interface State {
   connected: boolean;
   filmEntries: Array<FilmEntry>;
-  fetchFailure?: any;
-  entryCreationFailure?: any;
-  entryModificationFailure?: any;
-  entryDeleteFailure?: any;
+  fetchFailure?: ApplicationError;
+  entryCreationFailure?: ApplicationError;
+  entryModificationFailure?: ApplicationError;
+  entryDeleteFailure?: ApplicationError;
+  clientError?: ApplicationError;
 }
 
 // Since root reducer uses this reducer's state as { entryState: datatableReducer ...} we use this wrapper
@@ -20,10 +22,11 @@ export interface WrappedState {
 const initialState: State = {
   connected: false,
   filmEntries: [],
-  fetchFailure: null,
-  entryCreationFailure: null,
-  entryModificationFailure: null,
-  entryDeleteFailure: null
+  fetchFailure: undefined,
+  entryCreationFailure: undefined,
+  entryModificationFailure: undefined,
+  entryDeleteFailure: undefined,
+  clientError: undefined
 };
 
 export default function datatableReducer(state: State = initialState, action: FilmEntryAction): State {
@@ -43,7 +46,7 @@ export default function datatableReducer(state: State = initialState, action: Fi
     case FilmEntryActions.ENTRY_FETCH_SUCCESS:
       return {
         ...state,
-        fetchFailure: null,
+        fetchFailure: undefined,
         filmEntries: action.payload
       };
     case FilmEntryActions.ENTRY_FETCH_FAILURE:
@@ -56,7 +59,7 @@ export default function datatableReducer(state: State = initialState, action: Fi
       return {
         ...state,
         filmEntries: [...state.filmEntries, action.payload],
-        entryCreationFailure: null
+        entryCreationFailure: undefined
       };
     case FilmEntryActions.ENTRY_CREATE_FAILURE:
       return {
@@ -69,7 +72,8 @@ export default function datatableReducer(state: State = initialState, action: Fi
       let index = findIndex(entries, e => e.id === action.payload.id);
       return {
         ...state,
-        filmEntries: [...entries.slice(0, index), action.payload, ...entries.slice(index + 1)]
+        filmEntries: [...entries.slice(0, index), action.payload, ...entries.slice(index + 1)],
+        entryModificationFailure: undefined
       };
     case FilmEntryActions.ENTRY_MODIFY_FAILURE:
       return {
@@ -80,12 +84,19 @@ export default function datatableReducer(state: State = initialState, action: Fi
     case FilmEntryActions.ENTRY_DELETE_SUCCESS:
       return {
         ...state,
-        filmEntries: state.filmEntries.filter(e => e.id !== action.payload)
+        filmEntries: state.filmEntries.filter(e => e.id !== action.payload),
+        entryDeleteFailure: undefined
       };
     case FilmEntryActions.ENTRY_DELETE_FAILURE:
       return {
         ...state,
         entryDeleteFailure: action.payload
+      };
+    // Different errors
+    case FilmEntryActions.RAISE_CLIENT_ERROR:
+      return {
+        ...state,
+        clientError: action.payload
       };
     default:
       return state;

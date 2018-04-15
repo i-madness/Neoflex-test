@@ -19,6 +19,10 @@ $colorWarn: #ffc107;
     background-color: #218838;
     border-color: #1e7e34;
   }
+  &:disabled {
+    background-color: $colorSuccess + 70;
+    cursor: auto;
+  }
 }
 
 .btn-primary {

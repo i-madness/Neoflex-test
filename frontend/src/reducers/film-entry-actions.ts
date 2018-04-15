@@ -23,6 +23,10 @@ export const ENTRY_DELETE_REQUEST = 'ENTRY_DELETE_REQUEST';
 export const ENTRY_DELETE_SUCCESS = 'ENTRY_DELETE_SUCCESS';
 export const ENTRY_DELETE_FAILURE = 'ENTRY_DELETE_FAILURE';
 
+/* Errors */
+export const RAISE_CLIENT_ERROR = 'RAISE_CLIENT_ERROR';
+export const UNKNOWN_SERVER_ERROR = 'UNKNOWN_SERVER_ERROR'; // This case is unclear yet but not impossible though
+
 export default interface FilmEntryAction extends Action {
   payload?: any;
   type: string;

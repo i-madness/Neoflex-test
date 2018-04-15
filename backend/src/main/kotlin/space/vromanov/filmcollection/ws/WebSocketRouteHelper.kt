@@ -10,20 +10,20 @@ import space.vromanov.filmcollection.data.Film
 import space.vromanov.filmcollection.data.FilmService
 
 /**
- * A wrapper to message processing business logic. It helps to resolve logic "routes" i.e.
- * react with certain behaviour on certain action type of client message.
+ * A wrapper to info processing business logic. It helps to resolve logic "routes" i.e.
+ * react with certain behaviour on certain action type of client info.
  */
 data class WebSocketRouteHelper(private val session: WebSocketSession, private val message: WsClientMessage,
                                 private val filmService: FilmService, private val objectMapper: ObjectMapper) {
     companion object {
         val LOGGER = LoggerFactory.getLogger(WebSocketRouteHelper::class.java)!!
 
-        // Success codes for outgoing message:
+        // Success codes for outgoing info:
         val ALL_ENTRIES_FETCH_SUCCESS = 100
         val FILM_ADD_SUCCESS = 101
         val FILM_MODIFY_SUCCESS = 102
         val FILM_DELETE_SUCCESS = 103
-        // Failure codes for outgoing message:
+        // Failure codes for outgoing info:
         val ALL_ENTRIES_FETCH_FAILURE = 200
         val FILM_NOT_FOUND = 201
         val FILM_ADD_FAILURE = 202
@@ -42,7 +42,7 @@ data class WebSocketRouteHelper(private val session: WebSocketSession, private v
             LOGGER.error("Invalid message format", e)
             sendMessage(INVALID_MESSAGE_FORMAT, "Invalid message format:\n${e.message}")
         } catch (e: Exception) {
-            sendMessage(ALL_ENTRIES_FETCH_FAILURE, e.message)
+            sendMessage(ALL_ENTRIES_FETCH_FAILURE, "Error: unable to fetch all entries")
         }
     }
 
@@ -56,7 +56,7 @@ data class WebSocketRouteHelper(private val session: WebSocketSession, private v
             sendMessage(INVALID_MESSAGE_FORMAT, "Invalid message format:\n${e.message}")
         } catch (e: Exception) {
             LOGGER.error("Error during film adding execution", e)
-            sendMessage(FILM_ADD_FAILURE, e.message)
+            sendMessage(FILM_ADD_FAILURE, "Error: unable to add new film entry")
         }
     }
 
@@ -76,13 +76,13 @@ data class WebSocketRouteHelper(private val session: WebSocketSession, private v
             sendMessage(INVALID_MESSAGE_FORMAT, "Invalid message format:\n${e.message}")
         } catch (e: Exception) {
             LOGGER.error("Error during film modification execution", e)
-            sendMessage(FILM_MODIFY_FAILURE, e.message)
+            sendMessage(FILM_MODIFY_FAILURE, "Error: unable to modify film entry")
         }
     }
 
     fun processDeleteFilmMessage() {
+        val filmId = message.payload!!.toLongOrNull(10)
         try {
-            val filmId = message.payload!!.toLongOrNull(10)
             if (filmId != null) {
                 filmService.deleteFilm(filmId)
                 LOGGER.info("Film [id=$filmId] deleted")
@@ -96,7 +96,7 @@ data class WebSocketRouteHelper(private val session: WebSocketSession, private v
             sendMessage(INVALID_MESSAGE_FORMAT, "Invalid message format:\n${e.message}")
         } catch (e: Exception) {
             LOGGER.error("Error during film modification execution", e)
-            sendMessage(FILM_DELETE_FAILURE, e.message)
+            sendMessage(FILM_DELETE_FAILURE, "Error: unable to delete film [id=$filmId]")
         }
     }
 
@@ -106,32 +106,32 @@ data class WebSocketRouteHelper(private val session: WebSocketSession, private v
     private fun send(msg: String) = session.sendMessage(TextMessage(msg))
 
     /**
-     * Sends JSON message to client
+     * Sends JSON info to client
      */
-    private fun sendMessage(code: Int, message: String?) = send(objectMapper.writeValueAsString(WsServerMessage(code, message)))
+    private fun sendMessage(code: Int, info: String?) = send(objectMapper.writeValueAsString(WsServerMessage(code, info)))
 
     /**
-     * Sends JSON message to client containing a film entry
+     * Sends JSON info to client containing a film entry
      */
     private fun sendMessage(code: Int, entry: Film) = send(objectMapper.writeValueAsString(WsServerMessage(code, entry)))
 
     /**
-     * Sends JSON message to client containing ID of processed film entry
+     * Sends JSON info to client containing ID of processed film entry
      */
     private fun sendMessage(code: Int, entryId: Long) = send(objectMapper.writeValueAsString(WsServerMessage(code, entryId)))
 
     /**
-     * Sends JSON message to client (just code)
+     * Sends JSON info to client (just code)
      */
     private fun sendMessage(code: Int) = send(objectMapper.writeValueAsString(WsServerMessage(code)))
 
     /**
-     * Sends JSON message containing collection of Film entries
+     * Sends JSON info containing collection of Film entries
      */
     private fun sendEntriesMessage(code: Int, filmEntries: MutableIterable<Film>) = send(objectMapper.writeValueAsString(WsServerMessage(code, filmEntries)))
 
     /**
-     * Uses Jackson's ObjectMapper to retrieve film object from message's payload
+     * Uses Jackson's ObjectMapper to retrieve film object from info's payload
      */
     private fun readFilmObject(msg: WsClientMessage): Film = objectMapper.readValue<Film>(msg.payload!!)
 

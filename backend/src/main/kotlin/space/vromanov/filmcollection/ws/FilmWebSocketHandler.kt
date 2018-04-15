@@ -39,7 +39,7 @@ class FilmWebSocketHandler(
             }
         } catch (e: JsonProcessingException) {
             session.sendMessage(TextMessage(objectMapper.writeValueAsString(
-                WsServerMessage(WebSocketRouteHelper.INVALID_MESSAGE_FORMAT, "Invalid message format:\n${e.message}"))))
+                WsServerMessage(WebSocketRouteHelper.INVALID_MESSAGE_FORMAT, "Invalid info format:\n${e.message}"))))
         } catch (e: Exception) {
             session.sendMessage(TextMessage(objectMapper.writeValueAsString(
                 WsServerMessage(WebSocketRouteHelper.UNKNOWN_ERROR, "Unknown error:\n${e.message}"))))

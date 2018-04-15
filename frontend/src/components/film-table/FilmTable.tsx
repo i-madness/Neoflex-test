@@ -36,6 +36,7 @@ interface FilmTableState {
   newEntryId: number;
   modifiedEntryId: number;
   disappearingEntry?: FilmEntry; // when we click delete button this entry stays in table for 3 sec.
+  isEntryValid: boolean;
 }
 
 export default class FilmTable extends React.Component<FilmEntriesState, FilmTableState> {
@@ -67,6 +68,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
             this.setState({ genreAvailableOptions: response, genreFieldText: value });
           }
         });
+      this.validateEntryFields();
     },
 
     onSelect: (value: string) => {
@@ -74,6 +76,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
         editingEntry: { ...this.state.editingEntry, genre: value },
         genreFieldText: value
       });
+      this.validateEntryFields();
     }
   };
 
@@ -99,7 +102,8 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
     isOrderAsc: true,
     newEntryId: -1,
     modifiedEntryId: -1,
-    disappearingEntry: undefined
+    disappearingEntry: undefined,
+    isEntryValid: false
   });
 
   get filmEntries(): Array<FilmEntry> {
@@ -236,7 +240,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
           />
         </td>
         <td className={css.filmTableContentRowCellAction}>
-          <button onClick={() => this.onAddButtonClick()} className={css.filmTableAddAction}>
+          <button onClick={() => this.onAddButtonClick()} className={css.filmTableAddAction} disabled={!this.state.isEntryValid}>
             +
           </button>
           <button onClick={() => this.onClearButtonClick()} className={css.filmTableClearAction}>
@@ -275,6 +279,15 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
     );
   }
 
+  /* For now we stick to this primitive validation just to disable 'save' button */
+  validateEntryFields() {
+    if (isEmpty(this.state.editingEntry.name) || isEmpty(this.state.genreFieldText)) {
+      this.setState({ isEntryValid: false });
+    } else {
+      this.setState({ isEntryValid: true });
+    }
+  }
+
   onNameChange = (event: any) => {
     this.setState({
       editingEntry: {
@@ -282,6 +295,7 @@ export default class FilmTable extends React.Component<FilmEntriesState, FilmTab
         name: event.target.value
       }
     });
+    this.validateEntryFields();
   };
 
   onDescriptionChange = (event: any) => {
